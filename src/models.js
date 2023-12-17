@@ -40,21 +40,30 @@ class Project {
         } while (itemID in this.items);
         
         const priority = this.length;
-        const item = new ProjectItem(itemID, title, description, dueDate, priority);
+        const item = new ProjectItem(itemID, this.id, title, description, dueDate, priority);
         this.items[itemID] = item;
     }
 
     removeItem(id) {
+        const priority = this.items[id].priority;
         delete this.items[id];
+
+        for (let itemid in this.items) {
+            if (this.items[itemid].priority > priority) {
+                this.items[itemid].priority--;
+            }
+        }
     }
 }
 
 class ProjectItem {
-    constructor(id, title, description, dueDate, priority) {
+    constructor(id, projectid, title, description, dueDate, priority, completed=false) {
         this.id = id;
+        this.projectid = projectid;
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
+        this.completed = completed;
         this.priority = priority;
     }
 }
