@@ -38,9 +38,22 @@ ul {
 /* Main Section */
 section {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1rem;
+}
+
+.main-header {
+    display: flex;
+    width: 100%;
+    position: relative;
+    justify-content: center;
+}
+
+.add-project-item {
+    position: absolute;
+    right: 0;
 }
 
 .main-container {
@@ -55,7 +68,7 @@ section {
     gap: 0.5rem;
 }
 
-.test {
+.project-item {
     background-color: grey;
     height: 3rem;
 }
