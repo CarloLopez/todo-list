@@ -1,48 +1,27 @@
-import 'normalize.css';
-import './style.css';
-
 'use strict';
 
-// container for individual todo items
-class Project {
-    constructor(title) {
-        this.title = title;
-        this.items = [];
-    }
+import 'normalize.css';
+import './style.css';
+import {TodoList, Project, ProjectItem} from './models.js';
+import {showProjectDialog, refreshSidebar} from './dom.js';
 
-    addItem(title, description, dueDate) {
-        const priority = this.items.length + 1;
-        const item = new ProjectItem(title, description, dueDate, priority);
-        this.items.push(item);
-    }
+const todo = new TodoList();
 
-    removeItem(index) {
-        this.items.splice(index, 1);
-        // decrement subsequent project items' priority
-        for (let i = index; i < this.items.length; i++) {
-            this.items[i].priority--;
-        }
-    }
-}
+const newProjectButton = document.querySelector('.new-project');
+newProjectButton.addEventListener('click', () => {
+    showProjectDialog();
 
-class ProjectItem {
-    constructor(title, description, dueDate, priority) {
-        this.title = title;
-        this.description = description;
-        this.dueDate = dueDate;
-        this.priority = priority;
-    }
-}
+    // add event listener to create a new project using addProject()
+    const dialogForm = document.querySelector('.dialog-form');
+    dialogForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const projName = document.querySelector('#projName').value;
 
-class TodoList {
-    constructor() {
-        this.projects = [];
-    }
+        // call addProject()
+        todo.addProject(projName);
+        refreshSidebar(todo);
 
-    addProject(title) {
-        const project = new Project(title);
-        this.projects.push(project);
-    }
-}
-
-const main = new TodoList;
+        const dialog = document.querySelector('dialog');
+        dialog.close();
+    })
+});
