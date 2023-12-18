@@ -1,3 +1,4 @@
+/* General */
 body {
     background-color: #181a1b;
     color: white;
@@ -9,6 +10,14 @@ body {
     display: grid;
     grid-template-columns: 12rem 1fr;
     grid-template-rows: auto 1fr;
+}
+
+button {
+    color: white;
+    border-style: none;
+    background-color: transparent;
+
+    padding-left: 0;
 }
 
 /* Header Section */
@@ -34,6 +43,10 @@ nav {
 
 ul {
     padding-left: 0;
+}
+
+li {
+    list-style-type: none;
 }
 
 hr {

@@ -17,6 +17,10 @@ class TodoList {
         this.projects[projectID] = project;
         return projectID;
     }
+
+    deleteProject(projectID) {
+        delete this.projects[projectID];
+    }
 }
 
 class Project {

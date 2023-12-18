@@ -1,15 +1,25 @@
-function refreshSidebar(todo) {
+function displaySidebar(todo) {
     const sidebarProjects = document.querySelector('.sidebar-projects');
     sidebarProjects.innerHTML = '';
 
     for (const projectID in todo.projects) {
+        const projectContainer = document.createElement('div');
+        
         const button = document.createElement('button');
         const project = todo.projects[projectID];
         button.innerText = project.title;
         button.classList.add('project-button');
         button.setAttribute('data-projectID', project.id);
 
-        sidebarProjects.appendChild(button);
+        const deleteProject = document.createElement('button');
+        deleteProject.classList.add('delete-project');
+        deleteProject.setAttribute('data-projectid', projectID);
+        deleteProject.innerText = '-'
+
+        projectContainer.appendChild(button);
+        projectContainer.appendChild(deleteProject);
+
+        sidebarProjects.appendChild(projectContainer);
     }
 }
 
@@ -198,4 +208,4 @@ function createButton(innerText, classString) {
     return button;
 }
 
-export {showItemDialog, showProjectDialog, refreshSidebar, displayProject, displayAgenda};
+export {showItemDialog, showProjectDialog, displaySidebar, displayProject, displayAgenda};

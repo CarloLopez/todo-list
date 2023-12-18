@@ -6,7 +6,7 @@ import {TodoList} from './models.js';
 import {
     showItemDialog, 
     showProjectDialog, 
-    refreshSidebar, 
+    displaySidebar, 
     displayProject, 
     displayAgenda, 
 } from './dom.js';
@@ -41,7 +41,6 @@ function setAgendaEventListener(filter=null) {
     }
     
     addTaskEventListeners();
-    console.log(page.dataset.filter);
 }
 
 const newProjectButton = document.querySelector('.new-project');
@@ -63,27 +62,11 @@ dialogForm.addEventListener('submit', (event) => {
     const formType = formInputs.dataset.type;
 
     if (formType === 'project') {
-        const projName = document.querySelector('#projName').value;
+        let projName = document.querySelector('#projName').value.toUpperCase();
         todo.addProject(projName);
 
-        refreshSidebar(todo);
+        refreshSidebar();
 
-        // when project button is clicked, display all items related to project
-        const projButtons = document.querySelectorAll('.project-button');
-        const projArray = Array.from(projButtons);
-
-        projArray.forEach((projectButton) => {
-            projectButton.addEventListener('click', () => {
-                displayProject(todo, projectButton.dataset.projectid);
-
-                // set data-attribute to page type in section as identifier
-                const page = document.querySelector('section');
-                page.setAttribute('data-page', 'project');
-                page.setAttribute('data-projectid', projectButton.dataset.projectid);
-
-                addTaskEventListeners();
-            })
-        })
         const dialog = document.querySelector('dialog');
         dialog.close();
     } 
@@ -111,7 +94,7 @@ dialogForm.addEventListener('submit', (event) => {
 
             if (!projectID) {
                 projectID = todo.addProject(projectName);
-                refreshSidebar(todo);
+                refreshSidebar();
             }
         }
         const project = todo.projects[projectID];
@@ -120,12 +103,7 @@ dialogForm.addEventListener('submit', (event) => {
         const dialog = document.querySelector('dialog');
         dialog.close();
 
-        if (pageType === 'project') {
-            displayProject(todo, projectID);
-        } else {
-            displayAgenda(todo);
-        }
-        addTaskEventListeners();
+        refreshTasks(projectID);
     } 
     else if (formType === 'itemEdit') {
         const projectID = formInputs.dataset.projectid;
@@ -145,17 +123,52 @@ dialogForm.addEventListener('submit', (event) => {
         const dialog = document.querySelector('dialog');
         dialog.close();
 
-        const page = document.querySelector('section');
-        const pageType = page.dataset.page;
-
-        if (pageType === 'project') {
-            displayProject(todo, projectID);
-        } else {
-            displayAgenda(todo);
-        }
-        addTaskEventListeners();
+        refreshTasks(projectID);
     }
 })
+
+function addProjectButtonListeners() {
+    // when project button is clicked, display all items related to project
+    const projButtons = document.querySelectorAll('.project-button');
+    const projArray = Array.from(projButtons);
+
+    projArray.forEach((projectButton) => {
+        projectButton.addEventListener('click', () => {
+            displayProject(todo, projectButton.dataset.projectid);
+
+            // set data-attribute to page type in section as identifier
+            const page = document.querySelector('section');
+            page.setAttribute('data-page', 'project');
+            page.setAttribute('data-projectid', projectButton.dataset.projectid);
+
+            addTaskEventListeners();
+        })
+    })
+}
+
+function addDeleteProjectListeners() {
+    const deleteButton = document.querySelectorAll('.delete-project');
+
+    deleteButton.forEach((button) => {
+        button.addEventListener('click', () => {
+            const projectID = button.dataset.projectid;
+            todo.deleteProject(projectID);
+
+            refreshSidebar();
+
+            const page = document.querySelector('section');
+            const pageType = page.dataset.page;
+            const pageProjectID = page.dataset.projectid;
+    
+            if (pageType === 'project' && pageProjectID !== projectID) {
+                displayProject(todo, projectID);
+            } else {
+                displayAgenda(todo);
+            }
+            addTaskEventListeners();
+        })
+    })
+}
 
 function addTaskEventListeners() {
     addEditEventListener();
@@ -193,15 +206,7 @@ function addDeleteEventListener() {
             const project = todo.projects[projectID];
             project.removeItem(itemID);
 
-            const page = document.querySelector('section');
-            const pageType = page.dataset.page;
-
-            if (pageType === 'project') {
-                displayProject(todo, projectID);
-            } else {
-                displayAgenda(todo);
-            }
-            addTaskEventListeners();
+            refreshTasks(projectID);
         })
     })
 }
@@ -238,18 +243,31 @@ function addCheckboxListener() {
                 const itemObj = todo.projects[projectID].items[itemID];
                 itemObj.completed = true;
 
-                const page = document.querySelector('section');
-                const pageType = page.dataset.page;
-
-                if (pageType === 'project') {
-                    displayProject(todo, projectID);
-                } else {
-                    displayAgenda(todo);
-                }
-                addTaskEventListeners();
+                refreshTasks(projectID);
             })
         }
     })
 }
 
+function refreshSidebar() {
+    displaySidebar(todo);
+    addProjectButtonListeners();
+    addDeleteProjectListeners();
+}
+
+function refreshTasks(projectID=null) {
+    const page = document.querySelector('section');
+    const pageType = page.dataset.page;
+    const filter = page.dataset.filter;
+
+    if (pageType === 'project') {
+        displayProject(todo, projectID);
+    } else {
+        displayAgenda(todo, filter);
+    }
+    addTaskEventListeners();
+}
+
+const page = document.querySelector('section');
+page.setAttribute('data-page', 'agenda');
 displayAgenda(todo);
