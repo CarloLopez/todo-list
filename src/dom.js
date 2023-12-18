@@ -15,40 +15,80 @@ function refreshSidebar(todo) {
 
 function displayProject(todo, projectID) {
     const project = todo.projects[projectID];
-    const sortedItems = sortItems(project.items);
 
-    displayProjectHeader(project);
-    displayProjectItems(project, sortedItems);
+    const items = Object.values(project.items);
+    items.sort((a, b) => a.priority - b.priority);
 
+    displayHeader(project);
+    displayProjectItems(items);
 }
 
-function sortItems(obj) {
-    const dataArray = Object.entries(obj);
-    dataArray.sort((a, b) => a[1].priority - b[1].priority);
-    return dataArray;
+function displayAgenda(todo, filter=null) {
+    const items = [];
+    
+    const allProjects = todo.projects;
+    for (let projectID in allProjects) {
+        let project = allProjects[projectID];
+        for (let itemID in project.items) {
+            let item = project.items[itemID];
+            if (filter) {
+                if (filter === 'incomplete') {
+                    if (!item.completed) {
+                        items.push(item);
+                    }
+                } else {
+                    if (item.completed) {
+                        items.push(item);
+                    }
+                }
+            } else {
+                items.push(item);
+            }
+        }
+    }
+
+    displayHeader();
+    displayProjectItems(items);
 }
 
-function displayProjectHeader(project) {
-    const projectTitle = document.querySelector('.main-container-title');
-    projectTitle.innerText = project.title;
-
+function displayHeader(project=null) {
+    const title = document.querySelector('.main-container-title');
     const addItemButton = document.querySelector('.add-project-item');
-    addItemButton.setAttribute('data-projectID', project.id);
+    if (project) {
+        title.innerText = project.title;
+        addItemButton.setAttribute('data-projectID', project.id);
+    } else {
+        const page = document.querySelector('section');
+        const filter = page.dataset.filter;
+
+        if (filter) {
+            title.innerText = filter.charAt(0).toUpperCase() + filter.slice(1);
+        } else {
+            title.innerText = 'All Tasks';
+        }
+    }
 }
 
-function displayProjectItems(project, items) {
+function displayProjectItems(items) {
     const mainContainer = document.querySelector('.main-container');
     mainContainer.innerHTML = '';
 
-    for (let item of items) {
-        const task = item[1];
+    for (let task of items) {
+        const extendedTask = document.createElement('div');
+        extendedTask.classList.add('project-item');
+
         const taskContainer = document.createElement('li');
         taskContainer.classList.add('project-item-base');
         taskContainer.setAttribute('data-itemID', task.id);
-        taskContainer.setAttribute('data-projectID', project.id);
+        taskContainer.setAttribute('data-projectID', task.projectid);
 
         const checkBox = document.createElement('input');
+        checkBox.classList.add('checkbox');
         checkBox.setAttribute('type', 'checkbox');
+        if (task.completed) {
+            checkBox.checked = true;
+            checkBox.disabled = true;
+        }
 
         const actions = document.createElement('div');
         actions.appendChild(createButton('edit', 'edit-project-item'));
@@ -58,9 +98,6 @@ function displayProjectItems(project, items) {
         taskContainer.appendChild(checkBox);
         taskContainer.appendChild(createDiv(task.title, 'task-title'));
         taskContainer.appendChild(actions);
-
-        const extendedTask = document.createElement('div');
-        extendedTask.classList.add('project-item');
 
         const descriptionContainer = document.createElement('div');
         descriptionContainer.classList.add('project-item-desc');
@@ -75,6 +112,9 @@ function displayProjectItems(project, items) {
 function showItemDialog(itemObj=null) {
     const formInputs = document.querySelector('.form-inputs');
     formInputs.innerHTML = '';
+
+    const page = document.querySelector('section');
+    const pageType = page.dataset.page;
 
     let title;
     let desc;
@@ -92,6 +132,11 @@ function showItemDialog(itemObj=null) {
         title = createInput('title', 'text', 'Title');
         desc = createInput('desc', 'text', 'Description');
         date = createInput('date', 'date', 'Date');
+
+        if (pageType === 'agenda') {
+            const project = createInput('project', 'text', 'Project Name');
+            formInputs.appendChild(project);
+        }
 
         formInputs.setAttribute('data-type', 'projectItem');
     }
@@ -153,4 +198,4 @@ function createButton(innerText, classString) {
     return button;
 }
 
-export {showItemDialog, showProjectDialog, refreshSidebar, displayProject};
+export {showItemDialog, showProjectDialog, refreshSidebar, displayProject, displayAgenda};

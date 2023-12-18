@@ -15,6 +15,7 @@ class TodoList {
 
         const project = new Project(projectID, title);
         this.projects[projectID] = project;
+        return projectID;
     }
 }
 
