@@ -29,7 +29,7 @@ agendaButtonUpcoming.addEventListener('click', () => {
 });
 
 function setAgendaEventListener(filter=null) {
-    const page = document.querySelector('section');
+    const page = document.querySelector('.main');
     page.setAttribute('data-page', 'agenda');
 
     if (filter) {
@@ -75,7 +75,7 @@ dialogForm.addEventListener('submit', (event) => {
         const desc = document.querySelector('#desc').value;
         const date = document.querySelector('#date').value;
 
-        const page = document.querySelector('section');
+        const page = document.querySelector('.main');
         const pageType = page.dataset.page;
 
         let projectID;
@@ -137,7 +137,7 @@ function addProjectButtonListeners() {
             displayProject(todo, projectButton.dataset.projectid);
 
             // set data-attribute to page type in section as identifier
-            const page = document.querySelector('section');
+            const page = document.querySelector('.main');
             page.setAttribute('data-page', 'project');
             page.setAttribute('data-projectid', projectButton.dataset.projectid);
 
@@ -156,7 +156,7 @@ function addDeleteProjectListeners() {
 
             refreshSidebar();
 
-            const page = document.querySelector('section');
+            const page = document.querySelector('.main');
             const pageType = page.dataset.page;
             const pageProjectID = page.dataset.projectid;
     
@@ -179,7 +179,7 @@ function addTaskEventListeners() {
 
 function addEditEventListener() {
     const editButtons = document.querySelectorAll('.edit-project-item');
-    const page = document.querySelector('section');
+    const page = document.querySelector('.main');
     const pageType = page.dataset.page;
 
     editButtons.forEach((button) => {
@@ -224,7 +224,7 @@ function addInfoEventListener() {
             const item = document.querySelector(`[data-itemid='${itemID}']`);
             const itemDesc = item.nextElementSibling;
 
-            itemDesc.innerText = itemObj.description;
+            itemDesc.innerText = `> ${itemObj.description}`;
             button.disabled = true;
         })
     })
@@ -256,7 +256,7 @@ function refreshSidebar() {
 }
 
 function refreshTasks(projectID=null) {
-    const page = document.querySelector('section');
+    const page = document.querySelector('.main');
     const pageType = page.dataset.page;
     const filter = page.dataset.filter;
 
@@ -268,6 +268,34 @@ function refreshTasks(projectID=null) {
     addTaskEventListeners();
 }
 
-const page = document.querySelector('section');
-page.setAttribute('data-page', 'agenda');
-displayAgenda(todo);
+function menuToggle() {
+    const header = document.querySelector('header');
+    const mainContainer = document.querySelector('.main');
+    const menuButton = document.querySelector('.menu');
+    const footer = document.querySelector('footer');
+
+    menuButton.addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        // toggle sidebar visibility
+        if (sidebar.style.display !== 'none') {
+            sidebar.style.display = 'none';
+            mainContainer.style.gridColumn = '1 / 3';
+            header.style.gridColumn = '1 / 3';
+            footer.style.gridColumn = '1 / 3';
+        } else {
+            sidebar.style.display = 'block';
+            mainContainer.style.gridColumn = '2';
+            header.style.gridColumn = '2 / 3';
+            footer.style.gridColumn = '2 / 3';
+        }
+    })
+}
+
+function mainMenu() {
+    const page = document.querySelector('.main');
+    page.setAttribute('data-page', 'agenda');
+    displayAgenda(todo);
+}
+
+mainMenu();
+menuToggle();

@@ -1,9 +1,15 @@
+import ProjDeleteIcon from './assets/project-delete.png';
+import ItemEdit from './assets/item-edit.png';
+import ItemDelete from './assets/item-delete.png';
+import ItemInfo from './assets/item-info.png';
+
 function displaySidebar(todo) {
     const sidebarProjects = document.querySelector('.sidebar-projects');
     sidebarProjects.innerHTML = '';
 
     for (const projectID in todo.projects) {
         const projectContainer = document.createElement('div');
+        projectContainer.classList.add('sidebar-project-item');
         
         const button = document.createElement('button');
         const project = todo.projects[projectID];
@@ -14,7 +20,10 @@ function displaySidebar(todo) {
         const deleteProject = document.createElement('button');
         deleteProject.classList.add('delete-project');
         deleteProject.setAttribute('data-projectid', projectID);
-        deleteProject.innerText = '-'
+        const deleteButton = new Image();
+        deleteButton.classList.add('delete-project-button');
+        deleteButton.src = ProjDeleteIcon;
+        deleteProject.appendChild(deleteButton);
 
         projectContainer.appendChild(button);
         projectContainer.appendChild(deleteProject);
@@ -68,7 +77,7 @@ function displayHeader(project=null) {
         title.innerText = project.title;
         addItemButton.setAttribute('data-projectID', project.id);
     } else {
-        const page = document.querySelector('section');
+        const page = document.querySelector('.main');
         const filter = page.dataset.filter;
 
         if (filter) {
@@ -95,18 +104,24 @@ function displayProjectItems(items) {
         const checkBox = document.createElement('input');
         checkBox.classList.add('checkbox');
         checkBox.setAttribute('type', 'checkbox');
+
+        const header = document.createElement('div');
+        header.innerText = `${task.title} - [${task.dueDate}]`;
+        header.classList.add('task-title');
+
         if (task.completed) {
             checkBox.checked = true;
             checkBox.disabled = true;
+            header.style.textDecoration = 'line-through';
         }
 
         const actions = document.createElement('div');
-        actions.appendChild(createButton('edit', 'edit-project-item'));
-        actions.appendChild(createButton('delete', 'delete-project-item'));
-        actions.appendChild(createButton('info', 'info-project-item'));
+        actions.appendChild(createButton(ItemEdit, 'edit-project-item'));
+        actions.appendChild(createButton(ItemDelete, 'delete-project-item'));
+        actions.appendChild(createButton(ItemInfo, 'info-project-item'));
 
         taskContainer.appendChild(checkBox);
-        taskContainer.appendChild(createDiv(task.title, 'task-title'));
+        taskContainer.appendChild(header);
         taskContainer.appendChild(actions);
 
         const descriptionContainer = document.createElement('div');
@@ -123,7 +138,7 @@ function showItemDialog(itemObj=null) {
     const formInputs = document.querySelector('.form-inputs');
     formInputs.innerHTML = '';
 
-    const page = document.querySelector('section');
+    const page = document.querySelector('.main');
     const pageType = page.dataset.page;
 
     let title;
@@ -188,6 +203,7 @@ function createInput(id, type, text, val=null) {
     }
 
     const inputContainer = document.createElement('div');
+    inputContainer.classList.add('input-container');
     inputContainer.appendChild(label);
     inputContainer.appendChild(input);
 
@@ -201,10 +217,15 @@ function createDiv(innerText, classString) {
     return divContainer;
 }
 
-function createButton(innerText, classString) {
+function createButton(image, classString) {
     const button = document.createElement('button');
-    button.innerText = innerText;
     button.classList.add(classString);
+    
+    const icon = new Image();
+    icon.src = image;
+    icon.classList.add('item-action-icon');
+    button.appendChild(icon);
+
     return button;
 }
 

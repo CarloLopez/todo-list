@@ -6,34 +6,52 @@
     <title>Todo List</title>
 </head>
 <body>
-    <header>TO-DO</header>
+    <div class="corner">
+        <button class="menu">=</button>
+    </div>
+    <header>
+        <img class="logo" src="./assets/logo.png" alt="logo">
+        <div class="logo-text">TODO</div>
+    </header>
     <nav class="sidebar">
-        <ul class="sidebar-dates">
-            <li class="sidebar-date">
-                <img src="" alt="" class="sidebar-icon">
+        <ul class="sidebar-agendas">
+            <li class="sidebar-agenda-container">
+                <img src="./assets/tasks.png" alt="task icon" class="sidebar-icon">
                 <button class="sidebar-agenda" id="all">All Tasks</button>
             </li>
-            <li class="sidebar-date">
-                <img src="" alt="" class="sidebar-icon">
+            <li class="sidebar-agenda-container">
+                <img src="./assets/incomplete.png" alt="incomplete task icon" class="sidebar-icon">
                 <button class="sidebar-agenda" id="incomplete">Incomplete</button>
             </li>
-            <li class="sidebar-date">
-                <img src="" alt="" class="sidebar-icon">
+            <li class="sidebar-agenda-container">
+                <img src="./assets/complete.png" alt="complete task icon" class="sidebar-icon">
                 <button class="sidebar-agenda" id="completed">Completed</button>
             </li>
         </ul>
         <hr>
         <div class="sidebar-projects-container">
             <div class="sidebar-header">Projects</div>
-            <button class="new-project">+</button>
+            <button class="new-project">
+                <img src="./assets/create.png" alt="">
+            </button>
         </div>
         <ul class="sidebar-projects">
             <!-- PROJECTS GO HERE -->
         </ul>
     </nav>
     <section class="main">
+        <dialog id="dialogbox">
+            <form class="dialog-form" action="">
+                <div class="form-inputs">
+                    <!-- FORM GOES HERE -->
+                </div>
+                <input type="submit" value="Add" id="submitButton">
+            </form>
+        </dialog>
         <div class="main-header">
-            <button class="add-project-item">+</button>
+            <button class="add-project-item">
+                <img src="./assets/add-item.png" alt="add project item">
+            </button>
             <div class="main-container-title"></div>
         </div>
         <hr>
@@ -41,13 +59,11 @@
             <!-- TODO ITEMS GO HERE -->
         </ul>
     </section>
-    <dialog>
-        <form class="dialog-form" action="">
-            <div class="form-inputs">
-                <!-- FORM GOES HERE -->
-            </div>
-            <input type="submit" value="Add" id="submitButton">
-        </form>
-    </dialog>
+    <footer>
+        <a href="https://github.com/CarloLopez">
+            <img src="./assets/github.png" alt="github link">
+            <div>Carlo Lopez</div>
+        </a>
+    </footer>
 </body>
 </html>
